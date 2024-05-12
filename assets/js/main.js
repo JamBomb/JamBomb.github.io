@@ -1,14 +1,13 @@
 jQuery(window).on('load', function() {
-	"use strict";
+      
     
-    
-    // HIDE PRELOADER
-    $(".preloader").addClass("hide-preloader");   
-    
+    // HIDE PRELAODER
+    $(".preloader").addClass("preloader-hidden");
+
     // SHOW/ANIMATE ANIMATION CONTAINER
     setTimeout(function(){
 
-        $("#intro .animation-container").each(function() {
+        $(".hero .animation-container").each(function(){
 
             var e = $(this);
 
@@ -20,7 +19,7 @@ jQuery(window).on('load', function() {
 
         });
 
-    }, 800 );
+    }, 900 );
 
     
 });
@@ -30,31 +29,33 @@ jQuery(document).ready(function($) {
 	"use strict";
     
     
-    // ONE PAGE NAVIGATION
-	$(".navigation-main .navigation-items").onePageNav({
-		currentClass: "current",
-		changeHash: false,
-		scrollSpeed: 750,
-		scrollThreshold: 0.5,
-		filter: ":not(.external)",
-		easing: "swing"
-	});
-    
-    
-    // SMOOTH SCROLL FOR SAME PAGE LINKS
-    $(document).on('click', 'a.smooth-scroll', function(event) {
+    $(window).on('load', function() {
         
-        event.preventDefault();
+        // HIDE PRELAODER
+        $(".preloader").addClass("preloader-hidden");
+        
+        // SHOW/ANIMATE ANIMATION CONTAINER
+        setTimeout(function(){
+            
+            $(".hero .animation-container").each(function(){
 
-        $('html, body').animate({
-            scrollTop: $( $.attr(this, 'href') ).offset().top
-        }, 500);
+                var e = $(this);
+
+                setTimeout(function(){
+                    
+                    e.addClass("run-animation");
+                    
+                }, e.data("animation-delay") );
+
+            });
+            
+        }, 900 );
         
     });
     
     
     // INIT PARALLAX PLUGIN
-    $(".background-content.parallax-on").parallax({
+    $(".hero .background-content.parallax-on").parallax({
         scalarX: 24,
         scalarY: 15,
         frictionX: 0.1,
@@ -62,33 +63,56 @@ jQuery(document).ready(function($) {
     });
     
     
-    // SCROLL REVEAL SETUP
-    window.sr = ScrollReveal();
-    sr.reveal(".scroll-animated-from-bottom", { 
-        duration: 600,
-        delay: 0,
-        origin: "bottom",
-        rotate: { x: 0, y: 0, z: 0 },
-        opacity: 0,
-        distance: "20vh",
-        viewFactor: 0.4,
-        scale: 1,
-    });
-    
-    
-    // WORK CAROUSEL
-    $('.work-carousel').owlCarousel({
-        center: true,
-        items: 1,
-        loop: true,
-        margin: 30,
-        autoplay: true,
-        responsive:{
-            800:{
-                items: 3,
-            },
-        }
-    });
-    
+    // OPEN POPUP SEQUENCE
+    $(".open-popup").click(function(){
         
+        $(".popup").addClass("show");
+        $(".popup").append('<div class="close-popup backface"></div>');
+        
+    });
+
+    // CLOSE POPUP SEQUENCE
+    $(document).on('click', '.close-popup', function(){ 
+        
+        $(".popup").removeClass("show");
+        $(".popup .backface").remove();
+        
+    });
+    
+    
+    // AJAX SUBSCRIBE FORM
+    $('.subscribe-form').submit(function() {
+
+        var postdata = $('.subscribe-form').serialize();
+
+        $.ajax({
+
+            type: 'POST',
+            url: 'assets/php/subscribe.php',
+            data: postdata,
+            dataType: 'json',
+            success: function(json) {
+
+                $('.subscribe-form').removeClass("form-error");
+
+                if(json.valid === 0) {
+                    
+                    $('.subscribe-form').addClass("form-error");
+                    
+                } else {
+
+                    $('.subscribe-form').addClass("form-success");
+                    $('.subscribe-form input,.subscribe-form button').val('').prop('disabled', true);
+                    
+                }
+                
+            }
+
+        });
+
+        return false;
+
+    });
+    
+    
 });
